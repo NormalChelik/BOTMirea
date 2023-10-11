@@ -1,11 +1,20 @@
 import sqlite3
 
-conn = sqlite3.connect('db.db')
+connect = sqlite3.connect("users_db.db")
+cursor = connect.cursor()
+def create_db():
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users_delivery (
+    id INT PRIMARY KEY NOT NULL,
+    user_role VARCHAR(7) NOT NULL,
+    user_order VARCHAR(1000) NOT NULL
+    );""")
 
-cur = conn.cursor()
+    connect.commit()
 
-cur.execute('''CREATE TABLE IF NOT EXISTS userInfo (id int primary key, roles varchar(7), coins int)''')
+def add_client_delivery(message):
+    if not cursor.execute("SELECT * FROM users_delivery WHERE id = ?;", (message.from_user.id)).fetchone():
+        cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (message.from_user.id, "client", message.text))
 
-conn.commit()
-conn.close()
+        connect.commit()
 
+        return "Заказ добавлен!"

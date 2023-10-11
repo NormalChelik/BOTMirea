@@ -1,15 +1,13 @@
-from aiogram import types, F, Router
+from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 import kb
+import DataBase
+from states import InputUserData
 
 router = Router()
-
-class Form(StatesGroup):
-    name = State()
 
 @router.message(Command("start"))
 async def start(message: Message):
@@ -28,10 +26,16 @@ async def delivery(clbck: CallbackQuery):
 async  def courier(clbck: CallbackQuery):
     await clbck.message.edit_text("Вот список всех доступных заказов (выбери заказ и нажми на него):", reply_markup=kb.order.as_markup())
 
+
 @router.callback_query(F.data == "client")
-async def client(clbck: CallbackQuery):
+async def client(clbck: CallbackQuery, state: FSMContext):
+    await state.set_state(InputUserData.order_state)
     await clbck.message.edit_text("Напишите, что хотите заказать (вода, еда), цену:")
 
+@router.message(InputUserData.order_state)
+async def input_order(message: Message, state: FSMContext):
+    await state.update_data(order_state=message.text)
+    await message.answer(DataBase.add_client_delivery(message), reply_markup=kb.menu)
 
 
 @router.callback_query(F.data == "backmenu")
