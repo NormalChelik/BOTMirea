@@ -13,19 +13,11 @@ def create_db():
 
 
 def check_order_client(message):
-    if not cursor.execute("SELECT id FROM users_delivery WHERE id = ?;", (message.from_user.id,)).fetchone():
-        return True
-    else:
-        return False
+    return cursor.execute("SELECT id FROM users_delivery WHERE id = ?;", (message.from_user.id,)).fetchone()
 
 def edit_order_client(message):
     return cursor.execute("SELECT user_order FROM users_delivery WHERE id = ?", (message.from_user.id,)).fetchone()
 
 def add_client_delivery(message):
-    if not cursor.execute("SELECT id FROM users_delivery WHERE id = ?;",(message.from_user.id,)).fetchone():
-        cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (message.from_user.id, "client", message.text))
-        connect.commit()
-
-        return "Заказ добавлен! Вы можете отредактировать его или добавить фото."
-    else:
-        return "Вы уже добавили заказ"
+    cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (message.from_user.id, "client", message.text))
+    connect.commit()

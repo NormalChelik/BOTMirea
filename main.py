@@ -6,7 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from handlers import router
 from DataBase import create_db
 
-token = open("token.txt", "r").readline()
+token = open("token.txt", "r").readline().strip()
 
 async def main() -> None:
     bot = Bot(token=token, parse_mode="Markdown")
