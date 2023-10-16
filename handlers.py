@@ -29,10 +29,9 @@ async  def courier(clbck: CallbackQuery):
 
 @router.callback_query(F.data == "client")
 async def client(clbck: CallbackQuery, state: FSMContext):
-    print(DataBase.check_order_client(clbck.message))
-    if DataBase.check_order_client(clbck.message) != None:
-        if DataBase.check_order_client(clbck.message)[0] == clbck.message.from_user.id:
-            await clbck.message.edit_text("Ваш заказ: \n" + DataBase.edit_order_client(clbck.message)[0] + "\n вы можете отредактировать или удалить заказ", reply_markup=kb.create_order_kb)
+    if len(DataBase.check_order_client(clbck.message)) > 0:
+        if DataBase.check_order_client(clbck.message)[0] == clbck.message.from_user.id + ",":
+            await clbck.message.edit_text("Ваш заказ: \n" + DataBase.check_order_client(clbck.message)[2] + "\n вы можете отредактировать или удалить заказ", reply_markup=kb.create_order_kb)
 
     else:
         await state.set_state(InputUserData.order_state)
@@ -42,7 +41,7 @@ async def client(clbck: CallbackQuery, state: FSMContext):
 async def input_order(message: Message, state: FSMContext):
     await state.update_data(order_state=message.text)
     DataBase.add_client_delivery(message)
-    await message.answer("     *Заказ*\n" + DataBase.edit_order_client(message)[0] + "\n     *добавлен*!", reply_markup=kb.create_order_kb)
+    await message.answer("*Заказ*\n" + DataBase.check_order_client(message)[2] + "\n*добавлен*!", reply_markup=kb.create_order_kb)
 
 
 @router.callback_query(F.data == "backmenu")

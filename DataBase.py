@@ -13,11 +13,10 @@ def create_db():
 
 
 def check_order_client(message):
-    return cursor.execute("SELECT id FROM users_delivery WHERE id = ?;", (message.from_user.id,)).fetchone()
-
-def edit_order_client(message):
-    return cursor.execute("SELECT user_order FROM users_delivery WHERE id = ?", (message.from_user.id,)).fetchone()
+    print(cursor.execute("SELECT * FROM users_delivery WHERE 'id' = ?;", (message.from_user.id,)).fetchall())
+    return cursor.execute("SELECT * FROM users_delivery WHERE 'id' = ?;", (message.from_user.id,)).fetchall()
 
 def add_client_delivery(message):
     cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (message.from_user.id, "client", message.text))
     connect.commit()
+
