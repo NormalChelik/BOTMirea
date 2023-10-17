@@ -29,9 +29,8 @@ async  def courier(clbck: CallbackQuery):
 
 @router.callback_query(F.data == "client")
 async def client(clbck: CallbackQuery, state: FSMContext):
-    if len(DataBase.check_order_client(clbck.message)) > 0:
-        if DataBase.check_order_client(clbck.message)[0] == clbck.message.from_user.id + ",":
-            await clbck.message.edit_text("Ваш заказ: \n" + DataBase.check_order_client(clbck.message)[2] + "\n вы можете отредактировать или удалить заказ", reply_markup=kb.create_order_kb)
+    if len(DataBase.check_order_client(clbck.from_user.id)) > 0:
+        await clbck.message.edit_text(f"*Ваш заказ:* '{DataBase.check_order_client(clbck.from_user.id)[0][2]}' вы можете отредактировать или удалить", reply_markup=kb.create_order_kb)
 
     else:
         await state.set_state(InputUserData.order_state)
@@ -40,9 +39,19 @@ async def client(clbck: CallbackQuery, state: FSMContext):
 @router.message(InputUserData.order_state)
 async def input_order(message: Message, state: FSMContext):
     await state.update_data(order_state=message.text)
-    DataBase.add_client_delivery(message)
-    await message.answer("*Заказ*\n" + DataBase.check_order_client(message)[2] + "\n*добавлен*!", reply_markup=kb.create_order_kb)
+    DataBase.add_client_delivery(message.from_user.id, message.text)
+    await message.answer(f"*Заказ* '{DataBase.check_order_client(message.from_user.id)[0][2]}' *добавлен*!", reply_markup=kb.create_order_kb)
 
+@router.callback_query(F.data == "edit_order")
+async def edit_order(clbck: CallbackQuery, state: FSMContext):
+    await state.set_state(InputUserData.order_edit_state)
+    await clbck.message.edit_text("Напишите исправленный заказ и отправьте его боту:")
+
+@router.message(InputUserData.order_edit_state)
+async def input_edit_order(message: Message, state: FSMContext):
+    await state.update_data(order_edit_state=message.text)
+    DataBase.edit_client_delivery(message.from_user.id, message.text)
+    await message.answer(f"*Заказ* '{DataBase.check_order_client(message.from_user.id)[0][2]}' *исправлен*!", reply_markup=kb.create_order_kb)
 
 @router.callback_query(F.data == "backmenu")
 async def back(clbck: CallbackQuery):

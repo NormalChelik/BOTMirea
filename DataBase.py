@@ -12,11 +12,16 @@ def create_db():
     connect.commit()
 
 
-def check_order_client(message):
-    print(cursor.execute("SELECT * FROM users_delivery WHERE 'id' = ?;", (message.from_user.id,)).fetchall())
-    return cursor.execute("SELECT * FROM users_delivery WHERE 'id' = ?;", (message.from_user.id,)).fetchall()
+def check_order_client(messageID):
+    return cursor.execute("SELECT * FROM users_delivery WHERE id = ?;", (messageID,)).fetchall()
 
-def add_client_delivery(message):
-    cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (message.from_user.id, "client", message.text))
+def add_client_delivery(messageID, messageTEXT):
+    cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (messageID, "client", messageTEXT))
     connect.commit()
 
+def edit_client_delivery(messageID, messageTEXT):
+    cursor.execute("UPDATE users_delivery SET user_order = ? WHERE id = ?", (messageID, messageTEXT))
+    connect.commit()
+
+def all_order_courier():
+    return cursor.execute("SELECT id, user_order FROM users_delivery;").fetchall()
