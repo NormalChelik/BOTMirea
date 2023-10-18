@@ -24,13 +24,14 @@ async def delivery(clbck: CallbackQuery):
 
 @router.callback_query(F.data == "courier")
 async  def courier(clbck: CallbackQuery):
-    await clbck.message.edit_text("Вот список всех доступных заказов (выбери заказ и нажми на него):", reply_markup=kb.orders.as_markup())
+    orders = kb.create_order_buttons()
+    await clbck.message.edit_text("Вот список всех доступных заказов (выбери заказ и нажми на него):", reply_markup=orders.as_markup())
 
 
 @router.callback_query(F.data == "client")
 async def client(clbck: CallbackQuery, state: FSMContext):
     if len(DataBase.check_order_client(clbck.from_user.id)) > 0:
-        await clbck.message.edit_text(f"*Ваш заказ:* '{DataBase.check_order_client(clbck.from_user.id)[0][2]}' вы можете отредактировать или удалить", reply_markup=kb.create_order_kb)
+        await clbck.message.edit_text(f"*Ваш заказ:*\n\n'{DataBase.check_order_client(clbck.from_user.id)[0][2]}'\n\n_Вы можете отредактировать его или удалить_", reply_markup=kb.create_order_kb)
 
     else:
         await state.set_state(InputUserData.order_state)
@@ -40,7 +41,7 @@ async def client(clbck: CallbackQuery, state: FSMContext):
 async def input_order(message: Message, state: FSMContext):
     await state.update_data(order_state=message.text)
     DataBase.add_client_delivery(message.from_user.id, message.text)
-    await message.answer(f"*Заказ* '{DataBase.check_order_client(message.from_user.id)[0][2]}' *добавлен*!", reply_markup=kb.create_order_kb)
+    await message.answer(f"*Заказ добавлен!*\n\n'{DataBase.check_order_client(message.from_user.id)[0][2]}'", reply_markup=kb.create_order_kb)
 
 @router.callback_query(F.data == "edit_order")
 async def edit_order(clbck: CallbackQuery, state: FSMContext):
@@ -50,9 +51,14 @@ async def edit_order(clbck: CallbackQuery, state: FSMContext):
 @router.message(InputUserData.order_edit_state)
 async def input_edit_order(message: Message, state: FSMContext):
     await state.update_data(order_edit_state=message.text)
-    DataBase.edit_client_delivery(message.from_user.id, message.text)
-    await message.answer(f"*Заказ* '{DataBase.check_order_client(message.from_user.id)[0][2]}' *исправлен*!", reply_markup=kb.create_order_kb)
+    DataBase.update_client_delivery(message.from_user.id, message.text)
+    await message.answer(f"*Заказ исправлен!*\n\n'{DataBase.check_order_client(message.from_user.id)[0][2]}'", reply_markup=kb.create_order_kb)
 
+@router.callback_query(F.data == "delete_order")
+async def delete_order(clbck: CallbackQuery):
+    DataBase.delete_client_delivery(clbck.from_user.id)
+    await clbck.answer("Вы удалили свой заказ!", show_alert=True)
+    await clbck.message.edit_text("Это раздел доставки. Выбери свою роль:", reply_markup=kb.order_menu_kb)
 @router.callback_query(F.data == "backmenu")
 async def back(clbck: CallbackQuery):
     await clbck.message.edit_text("📌                   Главное меню                  📌", reply_markup=kb.menu)

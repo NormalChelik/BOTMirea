@@ -19,9 +19,12 @@ def add_client_delivery(messageID, messageTEXT):
     cursor.execute("INSERT INTO users_delivery VALUES(?,?,?)", (messageID, "client", messageTEXT))
     connect.commit()
 
-def edit_client_delivery(messageID, messageTEXT):
-    cursor.execute("UPDATE users_delivery SET user_order = ? WHERE id = ?", (messageID, messageTEXT))
+def update_client_delivery(messageID, messageTEXT):
+    cursor.execute("UPDATE users_delivery SET user_order = ? WHERE id = ?;", (messageTEXT, messageID))
     connect.commit()
 
+def delete_client_delivery(messageID):
+    cursor.execute("DELETE FROM users_delivery WHERE id = ?;", (messageID,))
+    connect.commit()
 def all_order_courier():
     return cursor.execute("SELECT id, user_order FROM users_delivery;").fetchall()
