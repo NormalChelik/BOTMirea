@@ -4,7 +4,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 import DataBase
 
 menu = [
-    [InlineKeyboardButton(text="МИРЭАДоставка", callback_data="delivery")]
+    [InlineKeyboardButton(text="🛒 МИРЭАДоставка", callback_data="delivery")],
+    [InlineKeyboardButton(text="📑 Предложка", callback_data="pred")]
 ]
 
 menu = InlineKeyboardMarkup(inline_keyboard=menu)
@@ -25,6 +26,16 @@ create_order_kb = [
     [InlineKeyboardButton(text="◀️ Назад в главное меню", callback_data="backmenu")]
 ]
 create_order_kb = InlineKeyboardMarkup(inline_keyboard=create_order_kb)
+
+
+
+predloshka = [
+    [InlineKeyboardButton(text="◀️ Назад в главное меню", callback_data="backmenu")],
+    [InlineKeyboardButton(text="📣 Главная предложка!", callback_data="predloshka_message")],
+    [InlineKeyboardButton(text="🧻 21.07.23 ПОСВЯТ!", callback_data="posvyat")]
+]
+
+predloshka = InlineKeyboardMarkup(inline_keyboard=predloshka)
 
 
 

@@ -18,6 +18,16 @@ async def start(message: Message):
 
     await message.answer(f"Приветствую, *{username}*! Я МИРЭАБот с разными прикалюхами. Это главное меню.", reply_markup=kb.menu)
 
+#Предложка
+@router.callback_query(F.data == "pred")
+async def start_predloshka(clbck: CallbackQuery):
+    await clbck.message.edit_text("Это предложка. Сюда можно писать различные пожелания и предложения. Также тут будут появляться _мини-предложки_ для разных событий!", reply_markup=kb.predloshka)
+
+@router.callback_query()
+
+
+
+#Доставка
 @router.callback_query(F.data == "delivery")
 async def delivery(clbck: CallbackQuery):
     await clbck.message.edit_text("Это раздел доставки. Выбери свою роль:", reply_markup=kb.order_menu_kb)
