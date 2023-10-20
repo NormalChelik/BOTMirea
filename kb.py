@@ -23,11 +23,15 @@ order_menu_kb = InlineKeyboardMarkup(inline_keyboard=order_menu_kb)
 create_order_kb = [
     [InlineKeyboardButton(text="✏️ Редактировать", callback_data="edit_order"), InlineKeyboardButton(text="📷 Добавить фото", callback_data="add_photo_order")],
     [InlineKeyboardButton(text="❌ Удалить", callback_data="delete_order")],
-    [InlineKeyboardButton(text="◀️ Назад в главное меню", callback_data="backmenu")]
+    [InlineKeyboardButton(text="◀️ Назад", callback_data="back")]
 ]
 create_order_kb = InlineKeyboardMarkup(inline_keyboard=create_order_kb)
 
+apply_order_kb = [
+    [InlineKeyboardButton(text="✅ Взять", callback_data="apply_order"), InlineKeyboardButton(text="❌ Отказаться", callback_data="refuse_order")]
+]
 
+apply_order_kb = InlineKeyboardMarkup(inline_keyboard=apply_order_kb)
 
 predloshka = [
     [InlineKeyboardButton(text="◀️ Назад в главное меню", callback_data="backmenu")],
@@ -43,8 +47,8 @@ def create_order_buttons():
     kb_order = DataBase.all_order_courier()
 
     orders = InlineKeyboardBuilder()
-    orders.button(text="◀️ Назад в главное меню", callback_data="backmenu")
+    orders.button(text="◀️ Назад", callback_data="back")
     for i in range(0, len(kb_order)):
-        orders.button(text=f"Заказ#{i+1}: {kb_order[i][1]}", callback_data=f"order#{kb_order[i][0]}")
+        orders.button(text=f"Заказ#{i+1}: {kb_order[i][1]}", callback_data=f"order_call_{kb_order[i][0]}")
     orders.adjust(1)
     return orders
