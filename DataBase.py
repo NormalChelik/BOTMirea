@@ -7,7 +7,8 @@ def create_db():
     id INT PRIMARY KEY NOT NULL,
     user_role VARCHAR(7) NOT NULL,
     user_order VARCHAR(1000) NOT NULL,
-    username VARCHAR(100) NOT NULL
+    username VARCHAR(100) NOT NUL,
+    status_emoji VARCHAR(1)
     );
     """)
     cursor.execute("""CREATE TABLE IF NOT EXISTS users_predloshka (
@@ -34,7 +35,7 @@ def check_order_client(messageID):
     return cursor.execute("SELECT * FROM users_delivery WHERE id = ?;", (messageID,)).fetchall()
 
 def add_client_delivery(messageID, messageTEXT, messageUSERNAME):
-    cursor.execute("INSERT INTO users_delivery VALUES(?,?,?,?)", (messageID, "client", messageTEXT, messageUSERNAME))
+    cursor.execute("INSERT INTO users_delivery VALUES(?,?,?,?,?)", (messageID, "client", messageTEXT, messageUSERNAME, "⛔"))
     connect.commit()
 
 def update_client_delivery(messageID, messageTEXT):

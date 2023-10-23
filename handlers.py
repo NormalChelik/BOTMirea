@@ -41,7 +41,7 @@ async  def courier(clbck: CallbackQuery):
 @router.callback_query(F.data == "client")
 async def client(clbck: CallbackQuery, state: FSMContext):
     if len(DataBase.check_order_client(clbck.from_user.id)) > 0:
-        await clbck.message.edit_text(f"*Клиент:* @{clbck.from_user.username}\n*Ваш заказ: *'{DataBase.check_order_client(clbck.from_user.id)[0][2]}'\n\n_Вы можете отредактировать его или удалить_", reply_markup=kb.create_order_kb)
+        await clbck.message.edit_text(f"*Клиент:* @{clbck.from_user.username}\n*Ваш заказ: *'{DataBase.check_order_client(clbck.from_user.id)[0][2]}'\n*Статус:* {DataBase.check_order_client(clbck.from_user.id)[0][4]}\n\n_Вы можете отредактировать его или удалить_", reply_markup=kb.create_order_kb)
 
     else:
         await state.set_state(InputUserData.order_state)
@@ -77,6 +77,10 @@ async def delete_order(clbck: CallbackQuery):
 @router.callback_query(F.data.startswith("order_call_"))
 async def callback_order(clbck: CallbackQuery):
     await clbck.message.edit_text(f"*Клиент:* @{DataBase.check_order_client(clbck.data[11:])[0][3]}\n*Заказ:* {DataBase.check_order_client(clbck.data[11:])[0][2]}\n\nХотите взять заказ?", reply_markup=kb.apply_order_kb) 
+
+@router.callback_query(F.data == "apply_order")
+async def apply_applyorder(clbck: CallbackQuery):
+    await clbck.message.edit_text("Вы взяли заказ"
 
 @router.callback_query(F.data == "refuse_order")
 async def refuse_applyorder(clbck: CallbackQuery):
